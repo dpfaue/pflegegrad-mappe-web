@@ -32,7 +32,7 @@ section{padding:34px 0}h2{font-size:clamp(22px,3.4vw,30px);color:var(--acc);marg
 .consent{display:flex;gap:10px;align-items:flex-start;font-size:13.5px;color:var(--dim);margin:16px 0;font-weight:400!important}
 .consent input{margin-top:4px;width:18px;height:18px;flex:none}
 .err{display:none;background:#fdecec;border:1px solid #f3b4b4;color:#8a1f1f;border-radius:10px;padding:10px 12px;margin:12px 0;font-size:14px}
-#paypal{margin-top:16px;min-height:10px}
+#pp-buttons{margin-top:16px;min-height:10px}
 .ok{display:none;background:#eaf7ef;border:1px solid #a9dbbc;border-radius:14px;padding:18px;margin-top:16px}
 details{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin:10px 0}
 summary{font-weight:700;cursor:pointer}
@@ -92,7 +92,7 @@ Die Pflegekasse muss in der Regel innerhalb von 25 Arbeitstagen entscheiden. Üb
   <p style="font-size:13px;color:var(--dim);margin:0">Zahlung über PayPal (auch Lastschrift oder Kreditkarte ohne PayPal-Konto). Auf deinem Beleg steht als Empfänger <b>DP Digital-Service</b>.</p>
   <div class="err" id="err"></div>
   <button class="btn" id="weiter" style="width:100%;margin-top:16px">Weiter zur Zahlung</button>
-  <div id="paypal"></div>
+  <div id="pp-buttons"></div>
   <div class="ok" id="ok"><b>Danke!</b><br><span id="okText"></span></div>
 </div></div></section>
 
@@ -202,11 +202,11 @@ $('weiter').addEventListener('click', () => {
       const order = await actions.order.capture(); funnel('7 Bezahlt');
       const p = Object.assign({ kind: 'shop_paid', produkt: 'pflege', requestId, quelle, paypalOrderId: order.id, paypalPayerEmail: (order.payer && order.payer.email_address) || '' }, daten());
       let ok = false; for (let i = 0; i < 3 && !ok; i++) { try { await post(p); ok = true; } catch (e) { await new Promise(r => setTimeout(r, 1500)); } }
-      $('paypal').style.display = 'none'; $('ok').style.display = 'block';
+      $('pp-buttons').style.display = 'none'; $('ok').style.display = 'block';
       $('okText').textContent = 'Die Mappe und deine Rechnung sind unterwegs an ' + p.email + ' (bitte auch im Spam-Ordner schauen). Transaktions-ID: ' + order.id + (ok ? '' : ' – Hinweis: Übertragung gestört, bitte schick uns kurz die Transaktions-ID.');
     },
     onError: () => { err('Bei der Zahlung ist ein Fehler aufgetreten. Es wurde nichts abgebucht – bitte erneut versuchen.'); }
-  }).render('#paypal');
+  }).render('#pp-buttons');
 });
 </script>
 <footer><div class="wrap"><a href="impressum.html">Impressum</a><a href="datenschutz.html">Datenschutz</a><a href="widerruf.html">Widerrufsbelehrung</a>
